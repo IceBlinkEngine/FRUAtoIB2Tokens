@@ -14,16 +14,56 @@ namespace ConvertArtToIB2
     public partial class Form1 : Form
     {
         public ImagePcx imagepcx;
-        public string sourceFolderPath = "";
-        public string targetFolderPath = "";
+        public string combatTokenFruaPath = "";
+        public string combatTokenIB2Path = "";
+        public string tilesFruaPath = "";
+        public string tilesIB2Path = "";
         public string mainDirectory;
 
         public Form1()
         {
             InitializeComponent();
             mainDirectory = Directory.GetCurrentDirectory();
+            combatTokenFruaPath = mainDirectory + "\\CombatTokensFRUA";
+            combatTokenIB2Path = mainDirectory + "\\CombatTokensIB2";
+            tilesFruaPath = mainDirectory + "\\TilesFRUA";
+            tilesIB2Path = mainDirectory + "\\TilesIB2";
         }
-                
+
+        private void btnCreateTokens_Click(object sender, EventArgs e)
+        {
+            btnCreateTokens.Enabled = false;
+            if (Directory.Exists(combatTokenFruaPath))
+            {
+                string[] files = Directory.GetFiles(combatTokenFruaPath, "*.pcx");
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        string filename = Path.GetFileName(file);
+                        string filenameNoExt = Path.GetFileNameWithoutExtension(file);
+                        if ((filename.EndsWith(".pcx")) || (filename.EndsWith(".PCX")))
+                        {
+                            imagepcx = new ImagePcx(file);
+                            Bitmap toSave = createCombatToken(imagepcx.PcxImage);
+                            toSave.MakeTransparent(Color.FromArgb(255, 0, 227));
+                            toSave.MakeTransparent(Color.FromArgb(103, 247, 159));
+                            toSave.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                            toSave.Save(combatTokenIB2Path + "\\tkn_" + filenameNoExt.ToLower() + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error While Creating Tokens: " + ex.ToString());
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Tokens Source directory does not exist");
+            }
+            btnCreateTokens.Enabled = true;
+        }
         public Bitmap createCombatToken(Bitmap b)
         {
             Bitmap returnBitmap = new Bitmap(200, 400);
@@ -128,12 +168,12 @@ namespace ConvertArtToIB2
             return new Point(-1, -1);
         }
 
-        private void btnCreateAll_Click(object sender, EventArgs e)
+        private void btnCreateTiles_Click(object sender, EventArgs e)
         {
-            btnCreateAll.Enabled = false;
-            if (Directory.Exists(sourceFolderPath))
+            btnCreateTiles.Enabled = false;
+            if (Directory.Exists(tilesFruaPath))
             {
-                string[] files = Directory.GetFiles(sourceFolderPath, "*.pcx");
+                string[] files = Directory.GetFiles(tilesFruaPath, "*.pcx");
                 foreach (string file in files)
                 {
                     try
@@ -143,47 +183,127 @@ namespace ConvertArtToIB2
                         if ((filename.EndsWith(".pcx")) || (filename.EndsWith(".PCX")))
                         {
                             imagepcx = new ImagePcx(file);
-                            Bitmap toSave = createCombatToken(imagepcx.PcxImage);
+                            Bitmap toSave = createTile(imagepcx.PcxImage);
                             toSave.MakeTransparent(Color.FromArgb(255, 0, 227));
                             toSave.MakeTransparent(Color.FromArgb(103, 247, 159));
-                            toSave.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                            Invalidate();
-                            toSave.Save(targetFolderPath + "\\tkn_" + filenameNoExt.ToLower() + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                            toSave.MakeTransparent(Color.FromArgb(128, 255, 128));
+                            toSave.MakeTransparent(Color.FromArgb(252, 100, 252));
+                            toSave.Save(tilesIB2Path + "\\t_" + filenameNoExt.ToLower() + ".png", System.Drawing.Imaging.ImageFormat.Png);
                         }
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error While Creating Tokens: " + ex.ToString());
+                        MessageBox.Show("Error While Creating Tiles: " + ex.ToString());
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Source directory does not exist");
+                MessageBox.Show("Tile Source directory does not exist");
             }
-            btnCreateAll.Enabled = true;
+            btnCreateTiles.Enabled = true;
+        }
+        public Bitmap createTile(Bitmap b)
+        {
+            Bitmap returnBitmap = new Bitmap(100, 100);
+            int top = 0;
+            int left = 0;
+            int bottom = 0;
+            int right = 0;
+
+            if (WallIsAt90(b)) //wall is at 65,60
+            {
+                top = 60;
+                left = 65;
+                bottom = traverseDown(left, top, b);
+                right = traverseRight(left, bottom, b);
+            }
+            else //wall is at 130,60 -> 187,117 (56x56)
+            {
+                top = 60;
+                left = 130;
+                bottom = traverseDown(left, top, b);
+                right = traverseRight(left, bottom, b);
+            }
+            
+            using (Graphics g = Graphics.FromImage(returnBitmap))
+            {
+                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                g.PixelOffsetMode = PixelOffsetMode.Half;
+
+                //Draw tile centered at bottom
+                int width = right - left;
+                int height = bottom - top;
+                int shiftX = (int)(((56f - (float)width) / 2f) * (100.0f / 56.0f));
+                int shiftY = (int)((56f - (float)height) * (100.0f / 56.0f));
+                Rectangle source = new Rectangle(left + 1, top + 1, width - 1, height - 1);
+                Rectangle target = new Rectangle(shiftX, shiftY, 100 - shiftX, 100 - shiftY);
+                g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
+            }
+            return returnBitmap;
+        }
+        public bool WallIsAt90(Bitmap b)
+        {
+            //try traversing vertically along x = 100 to find a non-black pixel, if you do then you found the wall tile.
+            for (int y = 0; y < b.Height; y++)
+            {
+                var pixel = b.GetPixel(90, y);
+                if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
+                {
+                    //still black pixel
+                }
+                else
+                {
+                    return true;
+                }
+            }            
+            return false;
+        }
+        public int traverseDown(int x, int startY, Bitmap b)
+        {
+            for (int y = startY; y < b.Height; y++)
+            {
+                var pixel = b.GetPixel(x, y);
+                if ((pixel.A == 255) && (pixel.R == 252) && (pixel.G == 100) && (pixel.B == 252))
+                {
+                    //still magenta R=252, G=100, B=252
+                }
+                else
+                {
+                    return y - 1;
+                }
+            }
+            return -1;
+        }
+        public int traverseRight(int startX, int y, Bitmap b)
+        {
+            for (int x = startX; x < b.Height; x++)
+            {
+                var pixel = b.GetPixel(x, y);
+                if ((pixel.A == 255) && (pixel.R == 252) && (pixel.G == 100) && (pixel.B == 252))
+                {
+                    //still magenta R=252, G=100, B=252
+                }
+                else
+                {
+                    return x - 1;
+                }
+            }
+            return -1;
         }
 
-        private void btnSourceFolder_Click(object sender, EventArgs e)
+        private void btnCreatePortraits_Click(object sender, EventArgs e)
         {
-            folderBrowserDialog1.SelectedPath = mainDirectory;
-            DialogResult result = folderBrowserDialog1.ShowDialog(); // Show the dialog.
-            if (result == DialogResult.OK) // Test result.
-            {
-                sourceFolderPath = folderBrowserDialog1.SelectedPath;
-                txtSourceFolder.Text = sourceFolderPath;
-            }
+
         }
 
-        private void btnTargetFolder_Click(object sender, EventArgs e)
+        private void btnCreateItemIcons_Click(object sender, EventArgs e)
         {
-            folderBrowserDialog2.SelectedPath = mainDirectory;
-            DialogResult result = folderBrowserDialog2.ShowDialog(); // Show the dialog.
-            if (result == DialogResult.OK) // Test result.
-            {
-                targetFolderPath = folderBrowserDialog2.SelectedPath;
-                txtTargetFolder.Text = targetFolderPath;
-            }
+
+        }
+        private void btnHelp_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

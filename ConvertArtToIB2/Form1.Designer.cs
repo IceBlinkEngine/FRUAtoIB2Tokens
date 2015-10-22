@@ -28,116 +28,91 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnCreateAll = new System.Windows.Forms.Button();
-            this.txtSourceFolder = new System.Windows.Forms.TextBox();
-            this.btnSourceFolder = new System.Windows.Forms.Button();
-            this.btnTargetFolder = new System.Windows.Forms.Button();
-            this.txtTargetFolder = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.folderBrowserDialog2 = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnCreateTokens = new System.Windows.Forms.Button();
+            this.btnCreateTiles = new System.Windows.Forms.Button();
+            this.btnCreateItemIcons = new System.Windows.Forms.Button();
+            this.btnCreatePortraits = new System.Windows.Forms.Button();
+            this.btnHelp = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // btnCreateAll
+            // btnCreateTokens
             // 
-            this.btnCreateAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCreateAll.Location = new System.Drawing.Point(166, 91);
-            this.btnCreateAll.Name = "btnCreateAll";
-            this.btnCreateAll.Size = new System.Drawing.Size(179, 39);
-            this.btnCreateAll.TabIndex = 4;
-            this.btnCreateAll.Text = "Create All Tokens";
-            this.btnCreateAll.UseVisualStyleBackColor = true;
-            this.btnCreateAll.Click += new System.EventHandler(this.btnCreateAll_Click);
+            this.btnCreateTokens.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCreateTokens.Location = new System.Drawing.Point(12, 154);
+            this.btnCreateTokens.Name = "btnCreateTokens";
+            this.btnCreateTokens.Size = new System.Drawing.Size(216, 39);
+            this.btnCreateTokens.TabIndex = 4;
+            this.btnCreateTokens.Text = "Create Combat Tokens";
+            this.btnCreateTokens.UseVisualStyleBackColor = true;
+            this.btnCreateTokens.Click += new System.EventHandler(this.btnCreateTokens_Click);
             // 
-            // txtSourceFolder
+            // btnCreateTiles
             // 
-            this.txtSourceFolder.Location = new System.Drawing.Point(85, 17);
-            this.txtSourceFolder.Name = "txtSourceFolder";
-            this.txtSourceFolder.ReadOnly = true;
-            this.txtSourceFolder.Size = new System.Drawing.Size(360, 20);
-            this.txtSourceFolder.TabIndex = 5;
+            this.btnCreateTiles.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCreateTiles.Location = new System.Drawing.Point(12, 107);
+            this.btnCreateTiles.Name = "btnCreateTiles";
+            this.btnCreateTiles.Size = new System.Drawing.Size(216, 39);
+            this.btnCreateTiles.TabIndex = 5;
+            this.btnCreateTiles.Text = "Create Tiles";
+            this.btnCreateTiles.UseVisualStyleBackColor = true;
+            this.btnCreateTiles.Click += new System.EventHandler(this.btnCreateTiles_Click);
             // 
-            // btnSourceFolder
+            // btnCreateItemIcons
             // 
-            this.btnSourceFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSourceFolder.Location = new System.Drawing.Point(452, 13);
-            this.btnSourceFolder.Name = "btnSourceFolder";
-            this.btnSourceFolder.Size = new System.Drawing.Size(33, 28);
-            this.btnSourceFolder.TabIndex = 6;
-            this.btnSourceFolder.Text = "...";
-            this.btnSourceFolder.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnSourceFolder.UseVisualStyleBackColor = true;
-            this.btnSourceFolder.Click += new System.EventHandler(this.btnSourceFolder_Click);
+            this.btnCreateItemIcons.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCreateItemIcons.Location = new System.Drawing.Point(12, 13);
+            this.btnCreateItemIcons.Name = "btnCreateItemIcons";
+            this.btnCreateItemIcons.Size = new System.Drawing.Size(216, 39);
+            this.btnCreateItemIcons.TabIndex = 6;
+            this.btnCreateItemIcons.Text = "Create Item Icons";
+            this.btnCreateItemIcons.UseVisualStyleBackColor = true;
+            this.btnCreateItemIcons.Click += new System.EventHandler(this.btnCreateItemIcons_Click);
             // 
-            // btnTargetFolder
+            // btnCreatePortraits
             // 
-            this.btnTargetFolder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnTargetFolder.Location = new System.Drawing.Point(452, 48);
-            this.btnTargetFolder.Name = "btnTargetFolder";
-            this.btnTargetFolder.Size = new System.Drawing.Size(33, 28);
-            this.btnTargetFolder.TabIndex = 8;
-            this.btnTargetFolder.Text = "...";
-            this.btnTargetFolder.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnTargetFolder.UseVisualStyleBackColor = true;
-            this.btnTargetFolder.Click += new System.EventHandler(this.btnTargetFolder_Click);
+            this.btnCreatePortraits.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCreatePortraits.Location = new System.Drawing.Point(12, 60);
+            this.btnCreatePortraits.Name = "btnCreatePortraits";
+            this.btnCreatePortraits.Size = new System.Drawing.Size(216, 39);
+            this.btnCreatePortraits.TabIndex = 7;
+            this.btnCreatePortraits.Text = "Create Portraits";
+            this.btnCreatePortraits.UseVisualStyleBackColor = true;
+            this.btnCreatePortraits.Click += new System.EventHandler(this.btnCreatePortraits_Click);
             // 
-            // txtTargetFolder
+            // btnHelp
             // 
-            this.txtTargetFolder.Location = new System.Drawing.Point(85, 52);
-            this.txtTargetFolder.Name = "txtTargetFolder";
-            this.txtTargetFolder.ReadOnly = true;
-            this.txtTargetFolder.Size = new System.Drawing.Size(360, 20);
-            this.txtTargetFolder.TabIndex = 7;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(10, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(76, 13);
-            this.label1.TabIndex = 9;
-            this.label1.Text = "Source Folder:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 54);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(73, 13);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "Target Folder:";
+            this.btnHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnHelp.Location = new System.Drawing.Point(11, 244);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(216, 39);
+            this.btnHelp.TabIndex = 8;
+            this.btnHelp.Text = "Instructions";
+            this.btnHelp.UseVisualStyleBackColor = true;
+            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(501, 146);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.btnTargetFolder);
-            this.Controls.Add(this.txtTargetFolder);
-            this.Controls.Add(this.btnSourceFolder);
-            this.Controls.Add(this.txtSourceFolder);
-            this.Controls.Add(this.btnCreateAll);
+            this.ClientSize = new System.Drawing.Size(239, 294);
+            this.Controls.Add(this.btnHelp);
+            this.Controls.Add(this.btnCreatePortraits);
+            this.Controls.Add(this.btnCreateItemIcons);
+            this.Controls.Add(this.btnCreateTiles);
+            this.Controls.Add(this.btnCreateTokens);
             this.Name = "Form1";
-            this.Text = "Convert FRUA PCX Combat Tokens to IceBlink 2 Format";
+            this.Text = "Convert Art to IB2";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnCreateAll;
-        private System.Windows.Forms.TextBox txtSourceFolder;
-        private System.Windows.Forms.Button btnSourceFolder;
-        private System.Windows.Forms.Button btnTargetFolder;
-        private System.Windows.Forms.TextBox txtTargetFolder;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog2;
+        private System.Windows.Forms.Button btnCreateTokens;
+        private System.Windows.Forms.Button btnCreateTiles;
+        private System.Windows.Forms.Button btnCreateItemIcons;
+        private System.Windows.Forms.Button btnCreatePortraits;
+        private System.Windows.Forms.Button btnHelp;
     }
 }
 
