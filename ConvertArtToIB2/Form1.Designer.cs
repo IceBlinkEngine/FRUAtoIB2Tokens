@@ -59,6 +59,7 @@
             // 
             // btnCreateItemIcons
             // 
+            this.btnCreateItemIcons.Enabled = false;
             this.btnCreateItemIcons.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCreateItemIcons.Location = new System.Drawing.Point(12, 13);
             this.btnCreateItemIcons.Name = "btnCreateItemIcons";
@@ -70,6 +71,7 @@
             // 
             // btnCreatePortraits
             // 
+            this.btnCreatePortraits.Enabled = false;
             this.btnCreatePortraits.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCreatePortraits.Location = new System.Drawing.Point(12, 60);
             this.btnCreatePortraits.Name = "btnCreatePortraits";

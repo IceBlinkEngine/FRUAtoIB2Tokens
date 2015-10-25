@@ -183,12 +183,32 @@ namespace ConvertArtToIB2
                         if ((filename.EndsWith(".pcx")) || (filename.EndsWith(".PCX")))
                         {
                             imagepcx = new ImagePcx(file);
-                            Bitmap toSave = createTile(imagepcx.PcxImage);
-                            toSave.MakeTransparent(Color.FromArgb(255, 0, 227));
-                            toSave.MakeTransparent(Color.FromArgb(103, 247, 159));
-                            toSave.MakeTransparent(Color.FromArgb(128, 255, 128));
-                            toSave.MakeTransparent(Color.FromArgb(252, 100, 252));
-                            toSave.Save(tilesIB2Path + "\\t_" + filenameNoExt.ToLower() + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                            if (makeTileDown(imagepcx.PcxImage)) //make two versions, up and down
+                            {
+                                //at top
+                                Bitmap toSave = createTile(imagepcx.PcxImage, true);
+                                toSave.MakeTransparent(Color.FromArgb(255, 0, 227));
+                                toSave.MakeTransparent(Color.FromArgb(103, 247, 159));
+                                toSave.MakeTransparent(Color.FromArgb(128, 255, 128));
+                                toSave.MakeTransparent(Color.FromArgb(252, 100, 252));
+                                toSave.Save(tilesIB2Path + "\\t_" + filenameNoExt.ToLower() + "_U.png", System.Drawing.Imaging.ImageFormat.Png);
+                                //at bottom
+                                toSave = createTile(imagepcx.PcxImage, false);
+                                toSave.MakeTransparent(Color.FromArgb(255, 0, 227));
+                                toSave.MakeTransparent(Color.FromArgb(103, 247, 159));
+                                toSave.MakeTransparent(Color.FromArgb(128, 255, 128));
+                                toSave.MakeTransparent(Color.FromArgb(252, 100, 252));
+                                toSave.Save(tilesIB2Path + "\\t_" + filenameNoExt.ToLower() + "_D.png", System.Drawing.Imaging.ImageFormat.Png);
+                            }
+                            else
+                            {
+                                Bitmap toSave = createTile(imagepcx.PcxImage, true);
+                                toSave.MakeTransparent(Color.FromArgb(255, 0, 227));
+                                toSave.MakeTransparent(Color.FromArgb(103, 247, 159));
+                                toSave.MakeTransparent(Color.FromArgb(128, 255, 128));
+                                toSave.MakeTransparent(Color.FromArgb(252, 100, 252));
+                                toSave.Save(tilesIB2Path + "\\t_" + filenameNoExt.ToLower() + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -203,7 +223,40 @@ namespace ConvertArtToIB2
             }
             btnCreateTiles.Enabled = true;
         }
-        public Bitmap createTile(Bitmap b)
+        public bool makeTileDown(Bitmap b)
+        {
+            int top = 0;
+            int left = 0;
+            int bottom = 0;
+            int right = 0;
+
+            if (WallIsAt90(b)) //wall is at 65,60
+            {
+                top = 60;
+                left = 65;
+                bottom = traverseDown(left, top, b);
+                right = traverseRight(left, bottom, b);
+            }
+            else //wall is at 130,60 -> 187,117 (56x56)
+            {
+                top = 60;
+                left = 130;
+                bottom = traverseDown(left, top, b);
+                right = traverseRight(left, bottom, b);
+            }
+            int width = right - left - 1;
+            int height = bottom - top - 1;
+            //if tile is 56 wide but not 56 tall then this is a tile that could be shifted down, return true
+            if ((width == 56) && (height < 56))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public Bitmap createTile(Bitmap b, bool makeTileUp)
         {
             Bitmap returnBitmap = new Bitmap(100, 100);
             int top = 0;
@@ -229,15 +282,46 @@ namespace ConvertArtToIB2
             using (Graphics g = Graphics.FromImage(returnBitmap))
             {
                 g.InterpolationMode = InterpolationMode.NearestNeighbor;
-                g.PixelOffsetMode = PixelOffsetMode.Half;
+                g.PixelOffsetMode = PixelOffsetMode.Default;
 
+                float scale = 100.0f / 56.0f;
+
+                int width = right - left - 1;
+                int height = bottom - top - 1;
+                float widthScaled = width * scale;
+                float heightScaled = height * scale;
+                float shiftXscaled = 0f;
+                float shiftYscaled = 0f;
+                //if tile is 56 wide but not 56 tall then this is a tile that should be at the top of the tile, shift up only
+                if ((width == 56) && (height < 56))
+                {
+                    shiftXscaled = 0f;
+                    if (makeTileUp)
+                    {
+                        shiftYscaled = 0f;
+                    }
+                    else
+                    {
+                        shiftYscaled = (float)(56 - height) * scale;
+                    }
+                }
+                //if tile is under 56x56 and not a top tile, shift to bottom and right 8 pixels
+                else if ((width < 56) && (height < 56))
+                {
+                    shiftXscaled = 8f;
+                    shiftYscaled = (float)(56 - height) * scale;
+                }
+                else //if tile is 56x56, do not shift
+                {
+                    shiftXscaled = 0f;
+                    shiftYscaled = 0f;
+                }
+                
                 //Draw tile centered at bottom
-                int width = right - left;
-                int height = bottom - top;
-                int shiftX = (int)(((56f - (float)width) / 2f) * (100.0f / 56.0f));
-                int shiftY = (int)((56f - (float)height) * (100.0f / 56.0f));
-                Rectangle source = new Rectangle(left + 1, top + 1, width - 1, height - 1);
-                Rectangle target = new Rectangle(shiftX, shiftY, 100 - shiftX, 100 - shiftY);
+                //int shiftX = (int)(((56f - (float)width) / 2f) * (100.0f / 56.0f));
+                //int shiftY = (int)((56f - (float)height) * (100.0f / 56.0f));
+                RectangleF source = new RectangleF(left + 1, top + 1, width - 1, height - 1);
+                RectangleF target = new RectangleF(shiftXscaled, shiftYscaled, widthScaled, heightScaled);
                 g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
             }
             return returnBitmap;
@@ -301,9 +385,16 @@ namespace ConvertArtToIB2
         {
 
         }
+
         private void btnHelp_Click(object sender, EventArgs e)
         {
+            string help = "To create combat tokens, place any FRUA combat token PCX files in the CombatTokensFRUA"
+            + " folder and then press the 'Create Combat Tokens' button. All the converted tokens will"
+            + " be placed in the CombatTokensIB2 folder." + Environment.NewLine
+            + " To create tiles, place any FRUA wall tile PCX files in the TilesFRUA folder and then press the"
+            + " 'Create Tiles' button. All the converted tiles will be placed in the TilesIB2 folder.";
 
+            MessageBox.Show(help);
         }
     }
 }
