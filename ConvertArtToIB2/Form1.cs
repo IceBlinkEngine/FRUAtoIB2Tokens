@@ -16,9 +16,13 @@ namespace ConvertArtToIB2
         public ImagePcx imagepcx;
         public string combatTokenFruaPath = "";
         public string combatTokenIB2Path = "";
+        public string propTokenIB2Path = "";
         public string tilesFruaPath = "";
         public string tilesIB2Path = "";
         public string mainDirectory;
+        public int tranR = 255;
+        public int tranG = 0;
+        public int tranB = 227;
 
         public Form1()
         {
@@ -26,6 +30,7 @@ namespace ConvertArtToIB2
             mainDirectory = Directory.GetCurrentDirectory();
             combatTokenFruaPath = mainDirectory + "\\CombatTokensFRUA";
             combatTokenIB2Path = mainDirectory + "\\CombatTokensIB2";
+            propTokenIB2Path = mainDirectory + "\\PropsIB2";
             tilesFruaPath = mainDirectory + "\\TilesFRUA";
             tilesIB2Path = mainDirectory + "\\TilesIB2";
         }
@@ -47,9 +52,23 @@ namespace ConvertArtToIB2
                             imagepcx = new ImagePcx(file);
                             Bitmap toSave = createCombatToken(imagepcx.PcxImage);
                             toSave.MakeTransparent(Color.FromArgb(255, 0, 227));
+                            toSave.MakeTransparent(Color.FromArgb(255, 0, 255));
                             toSave.MakeTransparent(Color.FromArgb(103, 247, 159));
+                            toSave.MakeTransparent(Color.FromArgb(100, 244, 156));
+                            toSave.MakeTransparent(Color.FromArgb(tranR, tranG, tranB));
                             toSave.RotateFlip(RotateFlipType.RotateNoneFlipX);
                             toSave.Save(combatTokenIB2Path + "\\tkn_" + filenameNoExt.ToLower() + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                            if (chkIncludePropsFromTokens.Checked)
+                            {
+                                toSave = createPropFromCombatToken(imagepcx.PcxImage);
+                                toSave.MakeTransparent(Color.FromArgb(255, 0, 227));
+                                toSave.MakeTransparent(Color.FromArgb(255, 0, 255));
+                                toSave.MakeTransparent(Color.FromArgb(103, 247, 159));
+                                toSave.MakeTransparent(Color.FromArgb(100, 244, 156));
+                                toSave.MakeTransparent(Color.FromArgb(tranR, tranG, tranB));
+                                toSave.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                                toSave.Save(propTokenIB2Path + "\\prp_" + filenameNoExt.ToLower() + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -71,7 +90,7 @@ namespace ConvertArtToIB2
             Point brp = findBottomRight(b);
             if ((tlp.X == 160) && (tlp.Y == 84)) //normal
             {
-                returnBitmap = new Bitmap(100, 200);                
+                returnBitmap = new Bitmap(100, 200);
             }
             using (Graphics g = Graphics.FromImage(returnBitmap))
             {
@@ -81,49 +100,93 @@ namespace ConvertArtToIB2
                 if ((tlp.X == 8) && (tlp.Y == 84)) //wide
                 {
                     //Draw top token
-                    Rectangle source = new Rectangle(tlp.X, tlp.Y, 48, 24);
+                    Rectangle source = new Rectangle(8, 84, 48, 24);
                     Rectangle target = new Rectangle(4, 52, 192, 96);
                     g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
 
                     //Draw bottom token
-                    source = new Rectangle(brp.X - 47, tlp.Y, 48, 24);
+                    source = new Rectangle(64, 84, 48, 24);
                     target = new Rectangle(4, 252, 192, 96);
                     g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
                 }
                 else if ((tlp.X == 160) && (tlp.Y == 22)) //tall
                 {
                     //Draw top token
-                    Rectangle source = new Rectangle(tlp.X, tlp.Y, 24, 48);
+                    Rectangle source = new Rectangle(160, 22, 24, 48);
                     Rectangle target = new Rectangle(52, 4, 96, 192);
                     g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
 
                     //Draw bottom token
-                    source = new Rectangle(brp.X - 23, tlp.Y, 24, 48);
+                    source = new Rectangle(192, 22, 24, 48);
                     target = new Rectangle(52, 204, 96, 192);
                     g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
                 }
                 else if ((tlp.X == 8) && (tlp.Y == 22)) //large
                 {
                     //Draw top token
-                    Rectangle source = new Rectangle(tlp.X, tlp.Y, 48, 48);
+                    Rectangle source = new Rectangle(8, 22, 48, 48);
                     Rectangle target = new Rectangle(4, 4, 192, 192);
                     g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
 
                     //Draw bottom token
-                    source = new Rectangle(brp.X - 47, tlp.Y, 48, 48);
+                    source = new Rectangle(64, 22, 48, 48);
                     target = new Rectangle(4, 204, 192, 192);
                     g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
                 }
                 else //normal
                 {
                     //Draw top token
-                    Rectangle source = new Rectangle(tlp.X, tlp.Y, 24, 24);
+                    Rectangle source = new Rectangle(160, 84, 24, 24);
                     Rectangle target = new Rectangle(2, 2, 96, 96);
                     g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
 
                     //Draw bottom token
-                    source = new Rectangle(brp.X - 23, tlp.Y, 24, 24);
+                    source = new Rectangle(192, 84, 24, 24);
                     target = new Rectangle(2, 102, 96, 96);
+                    g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
+                }
+            }
+            return returnBitmap;
+        }
+        public Bitmap createPropFromCombatToken(Bitmap b)
+        {
+            Bitmap returnBitmap = new Bitmap(200, 200);
+            Point tlp = findTopLeft(b);
+            if ((tlp.X == 160) && (tlp.Y == 84)) //normal
+            {
+                returnBitmap = new Bitmap(100, 100);                
+            }
+            using (Graphics g = Graphics.FromImage(returnBitmap))
+            {
+                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                g.PixelOffsetMode = PixelOffsetMode.Half;
+
+                if ((tlp.X == 8) && (tlp.Y == 84)) //wide
+                {
+                    //Draw top token
+                    Rectangle source = new Rectangle(8, 84, 48, 24);
+                    Rectangle target = new Rectangle(4, 52, 192, 96);
+                    g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
+                }
+                else if ((tlp.X == 160) && (tlp.Y == 22)) //tall
+                {
+                    //Draw top token
+                    Rectangle source = new Rectangle(160, 22, 24, 48);
+                    Rectangle target = new Rectangle(52, 4, 96, 192);
+                    g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
+                }
+                else if ((tlp.X == 8) && (tlp.Y == 22)) //large
+                {
+                    //Draw top token
+                    Rectangle source = new Rectangle(8, 22, 48, 48);
+                    Rectangle target = new Rectangle(4, 4, 192, 192);
+                    g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
+                }
+                else //normal
+                {
+                    //Draw top token
+                    Rectangle source = new Rectangle(160, 84, 24, 24);
+                    Rectangle target = new Rectangle(2, 2, 96, 96);
                     g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
                 }
             }
@@ -131,30 +194,144 @@ namespace ConvertArtToIB2
         }
         public Point findTopLeft(Bitmap b)
         {
+            var pixel = b.GetPixel(1, 1);
+            if (b.Width > 215)
+            {
+                //normal
+                pixel = b.GetPixel(160, 84);
+                if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
+                {
+                    //still black pixel
+                }
+                else
+                {
+                    tranR = pixel.R;
+                    tranG = pixel.G;
+                    tranB = pixel.B;
+                    return new Point(160, 84);
+                }
+            }
+
+            if (b.Width > 215)
+            {
+                //tall
+                pixel = b.GetPixel(160, 22);
+                if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
+                {
+                    //still black pixel
+                }
+                else
+                {
+                    tranR = pixel.R;
+                    tranG = pixel.G;
+                    tranB = pixel.B;
+                    return new Point(160, 22);
+                }
+            }
+
+            //wide
+            pixel = b.GetPixel(8, 84);
+            if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
+            {
+                //still black pixel
+            }
+            else
+            {
+                tranR = pixel.R;
+                tranG = pixel.G;
+                tranB = pixel.B;
+                return new Point(8, 84);
+            }
+
+            //large
+            pixel = b.GetPixel(8, 22);
+            if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
+            {
+                //still black pixel
+            }
+            else
+            {
+                tranR = pixel.R;
+                tranG = pixel.G;
+                tranB = pixel.B;
+                return new Point(8, 22);
+            }
+
+            //still didn't find it so try this
             for (int x = 0; x < b.Width; x++)
             {
                 for (int y = 0; y < b.Height; y++)
                 {
-                    var pixel = b.GetPixel(x, y);
+                    pixel = b.GetPixel(x, y);
                     if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
                     {
                         //still black pixel
                     }
                     else
                     {
+                        tranR = pixel.R;
+                        tranG = pixel.G;
+                        tranB = pixel.B;
                         return new Point(x, y);
                     }
                 }
             }
+            tranR = 255;
+            tranG = 0;
+            tranB = 227;
             return new Point(-1, -1);
         }
         public Point findBottomRight(Bitmap b)
         {
+            //normal
+            var pixel = b.GetPixel(216, 108);
+            if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
+            {
+                //still black pixel
+            }
+            else
+            {
+                return new Point(216, 108);
+            }
+
+            //tall
+            pixel = b.GetPixel(216, 69);
+            if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
+            {
+                //still black pixel
+            }
+            else
+            {
+                return new Point(216, 69);
+            }
+
+            //wide
+            pixel = b.GetPixel(111, 108);
+            if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
+            {
+                //still black pixel
+            }
+            else
+            {
+                return new Point(111, 108);
+            }
+
+            //large
+            pixel = b.GetPixel(111, 69);
+            if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
+            {
+                //still black pixel
+            }
+            else
+            {
+                return new Point(111, 69);
+            }
+
             for (int x = b.Width - 1; x >= 0; x--)
             {
                 for (int y = b.Height - 1; y >= 0; y--)
                 {
-                    var pixel = b.GetPixel(x, y);
+                    pixel = b.GetPixel(x, y);
                     if ((pixel.A == 255) && (pixel.R == 0) && (pixel.G == 0) && (pixel.B == 0))
                     {
                         //still black pixel

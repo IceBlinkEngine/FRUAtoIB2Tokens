@@ -33,6 +33,7 @@
             this.btnCreateItemIcons = new System.Windows.Forms.Button();
             this.btnCreatePortraits = new System.Windows.Forms.Button();
             this.btnHelp = new System.Windows.Forms.Button();
+            this.chkIncludePropsFromTokens = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnCreateTokens
@@ -92,11 +93,24 @@
             this.btnHelp.UseVisualStyleBackColor = true;
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
             // 
+            // chkIncludePropsFromTokens
+            // 
+            this.chkIncludePropsFromTokens.AutoSize = true;
+            this.chkIncludePropsFromTokens.Checked = true;
+            this.chkIncludePropsFromTokens.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkIncludePropsFromTokens.Location = new System.Drawing.Point(13, 200);
+            this.chkIncludePropsFromTokens.Name = "chkIncludePropsFromTokens";
+            this.chkIncludePropsFromTokens.Size = new System.Drawing.Size(187, 17);
+            this.chkIncludePropsFromTokens.TabIndex = 9;
+            this.chkIncludePropsFromTokens.Text = "Make Props From Tokens As Well";
+            this.chkIncludePropsFromTokens.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(239, 294);
+            this.Controls.Add(this.chkIncludePropsFromTokens);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.btnCreatePortraits);
             this.Controls.Add(this.btnCreateItemIcons);
@@ -105,6 +119,7 @@
             this.Name = "Form1";
             this.Text = "Convert Art to IB2";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -115,6 +130,7 @@
         private System.Windows.Forms.Button btnCreateItemIcons;
         private System.Windows.Forms.Button btnCreatePortraits;
         private System.Windows.Forms.Button btnHelp;
+        private System.Windows.Forms.CheckBox chkIncludePropsFromTokens;
     }
 }
 
