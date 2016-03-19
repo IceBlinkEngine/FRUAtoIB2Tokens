@@ -19,6 +19,8 @@ namespace ConvertArtToIB2
         public string propTokenIB2Path = "";
         public string tilesFruaPath = "";
         public string tilesIB2Path = "";
+        public string itemIconsNWN2Path = "";
+        public string itemIconsIB2Path = ""; 
         public string mainDirectory;
         public int tranR = 255;
         public int tranG = 0;
@@ -33,6 +35,8 @@ namespace ConvertArtToIB2
             propTokenIB2Path = mainDirectory + "\\PropsIB2";
             tilesFruaPath = mainDirectory + "\\TilesFRUA";
             tilesIB2Path = mainDirectory + "\\TilesIB2";
+            itemIconsNWN2Path = mainDirectory + "\\ItemIconsNWN2";
+            itemIconsIB2Path = mainDirectory + "\\ItemIconsIB2";
         }
 
         private void btnCreateTokens_Click(object sender, EventArgs e)
@@ -560,14 +564,64 @@ namespace ConvertArtToIB2
 
         private void btnCreateItemIcons_Click(object sender, EventArgs e)
         {
-
+            btnCreateItemIcons.Enabled = false;
+            if (Directory.Exists(itemIconsNWN2Path))
+            {
+                string[] files = Directory.GetFiles(itemIconsNWN2Path, "*.tga");
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        string filename = Path.GetFileName(file);
+                        string filenameNoExt = Path.GetFileNameWithoutExtension(file);
+                        if ((filename.EndsWith(".tga")) || (filename.EndsWith(".TGA")))
+                        {
+                            Bitmap toSave = resizeItemIconToIB2(TargaImage.LoadTargaImage(file));
+                            
+                            if (filenameNoExt.StartsWith("it_"))
+                            {
+                                toSave.Save(itemIconsIB2Path + "\\" + filenameNoExt.ToLower() + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                            }
+                            else
+                            {
+                                toSave.Save(itemIconsIB2Path + "\\it_" + filenameNoExt.ToLower() + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error While Creating Item Icons: " + ex.ToString());
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("NWN2 Icon Source directory does not exist");
+            }
+            btnCreateItemIcons.Enabled = true;
         }
+        public Bitmap resizeItemIconToIB2(Bitmap b)
+        {
+            Bitmap returnBitmap = new Bitmap(100, 100);
+            using (Graphics g = Graphics.FromImage(returnBitmap))
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                //g.PixelOffsetMode = PixelOffsetMode.Half;
 
+                Rectangle source = new Rectangle(0, 0, b.Width, b.Height);
+                Rectangle target = new Rectangle(0, 0, 100, 100);
+                g.DrawImage((Image)b, target, source, GraphicsUnit.Pixel);
+            }
+            return returnBitmap;
+        }
         private void btnHelp_Click(object sender, EventArgs e)
         {
             string help = "To create combat tokens, place any FRUA combat token PCX files in the CombatTokensFRUA"
             + " folder and then press the 'Create Combat Tokens' button. All the converted tokens will"
             + " be placed in the CombatTokensIB2 folder." + Environment.NewLine
+            + " To create Item icons from any TGA file (like NWN or NWN2), place any TGA files in the ItemIconsNWN2"
+            + " folder and then press the 'Create Item Icons' button. All the converted items will"
+            + " be placed in the ItemIconsIB2 folder." + Environment.NewLine
             + " To create tiles, place any FRUA wall tile PCX files in the TilesFRUA folder and then press the"
             + " 'Create Tiles' button. All the converted tiles will be placed in the TilesIB2 folder.";
 
